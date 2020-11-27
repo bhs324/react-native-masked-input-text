@@ -142,12 +142,14 @@ function autofillNextChars(currentChar: string, inputType: UserInputType, tokens
 }
 
 function canNextCharBeSkipped(currentChar: string, inputType: UserInputType, currentToken: ITokenRegex): boolean {
-	return (
+	const result = (
 		inputType === UserInputType.INSERTION &&
-		currentToken && currentToken.literal &&
-		(currentToken.optional ||
-			!currentCharMatchesRegex(currentChar, currentToken))
+		currentToken && (currentToken.literal ||
+		(currentToken.optional &&
+			!currentCharMatchesRegex(currentChar, currentToken)))
 	);
+	// console.log('canNextCharBeSkipped', currentChar, currentToken, result);
+	return result;
 }
 
 function canNextCharBeAutoCompleted(currentChar: string, inputType: UserInputType, currentToken: ITokenRegex): boolean {
@@ -169,5 +171,7 @@ function canCurrentCharBeRemovedFromInput(currentChar: string, inputType: UserIn
 
 function currentCharMatchesRegex(currentChar: string, token: ITokenRegex): boolean {
 	const match = token && currentChar.match(token.regex);
-	return match != null && (match[0] === currentChar || (!match[0] && token.optional));
+	const result = match != null && (match[0] === currentChar);
+	// console.log('currentCharMatchesRegex', match, result);
+	return result;
 }
